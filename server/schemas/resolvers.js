@@ -3,7 +3,7 @@ import { User } from "../models";
 
 const resolvers = {
     Query: {
-        user: async ({ user = null, params }, res) => {
+        user: async (parent, { user = null, params }, res) => {
             const foundUser = await User.findOne({
               $or: [{ _id: user ? user._id : params.id }, { username: params.username }],
             });
@@ -16,7 +16,7 @@ const resolvers = {
         }
     },
     Mutation: {
-        createUser: async ({ body }, res) => {
+        createUser: async (parent, { body }, res) => {
             const user = await User.create(body);
         
             if (!user) {
@@ -25,7 +25,7 @@ const resolvers = {
             const token = signToken(user);
             res.json({ token, user });
         },
-        login: async ({ body }, res) => {
+        login: async (parent, { body }, res) => {
             const user = await User.findOne({ $or: [{ username: body.username }, { email: body.email }] });
             if (!user) {
               return res.status(400).json({ message: "Can't find this user" });
@@ -39,7 +39,7 @@ const resolvers = {
             const token = signToken(user);
             res.json({ token, user });
         },
-        saveBook: async ({ user, body }, res) => {
+        saveBook: async (parent, { user, body }, res) => {
             console.log(user);
             try {
               const updatedUser = await User.findOneAndUpdate(
@@ -53,7 +53,7 @@ const resolvers = {
               return res.status(400).json(err);
             }
         },
-        deleteBook: async ({ user, params }, res) => {
+        deleteBook: async (parent, { user, params }, res) => {
             const updatedUser = await User.findOneAndUpdate(
               { _id: user._id },
               { $pull: { savedBooks: { bookId: params.bookId } } },
