@@ -2,7 +2,7 @@ const { gql } = require('apollo-server-express');
 
 const typeDefs = gql`
 type Query {
-    me: [User]
+    me: User
 }
 
 input BookInput {
@@ -43,3 +43,5 @@ type Auth {
     user: User
 }
 `
+
+module.exports = typeDefs;
